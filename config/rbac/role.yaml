@@ -65,6 +65,9 @@ rules:
   resources:
   - llmbatchgateways
   verbs:
+  - create
+  - delete
+  - deletecollection
   - get
   - list
   - patch

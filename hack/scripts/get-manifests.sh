@@ -4,34 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-# ---------------------------------------------------------------------------
-# Component definitions: name|repo|commit_sha|source_path|post_hook
-#
-# To add a new sub-component, append a line to COMPONENTS and optionally
-# define a post_hook_<name> function below.
-# ---------------------------------------------------------------------------
-COMPONENTS=(
-    "batchgateway|llm-d-batch-gateway-operator|c426eeb4dc90e9ac694fa31ea20a7354c593a94e|config|post_hook_batchgateway"
-)
-
-# ---------------------------------------------------------------------------
-# Post-download hooks
-# ---------------------------------------------------------------------------
-
-# TODO: remove once quay.io/opendatahub/odh-batch-gateway-operator is published
-post_hook_batchgateway() {
-    local dst="$1"
-    sed -i.bak 's|BATCH_GATEWAY_OPERATOR_IMAGE=.*|BATCH_GATEWAY_OPERATOR_IMAGE=ghcr.io/opendatahub-io/batch-gateway-operator:main|' \
-        "${dst}/base/params.env"
-    rm -f "${dst}/base/params.env.bak"
-}
-
-# ---------------------------------------------------------------------------
-# Fetch logic
-# ---------------------------------------------------------------------------
-
 fetch_component() {
-    local name="$1" repo="$2" commit="$3" src_path="$4" hook="$5"
+    local name="$1" repo="$2" commit="$3" src_path="$4"
     local repo_url="https://github.com/opendatahub-io/${repo}"
     local dst="${PROJECT_ROOT}/config/manifests/${name}"
 
@@ -56,18 +30,17 @@ fetch_component() {
         rm -rf "${tmp}"
     fi
 
-    if [[ -n "${hook}" ]] && declare -f "${hook}" > /dev/null; then
-        "${hook}" "${dst}"
-    fi
-
     echo "[${name}] Manifests ready at ${dst}"
 }
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+# TODO: remove once quay.io/opendatahub/odh-batch-gateway-operator is published
+patch_batchgateway_image() {
+    local dst="$1"
+    sed -i.bak 's|BATCH_GATEWAY_OPERATOR_IMAGE=.*|BATCH_GATEWAY_OPERATOR_IMAGE=ghcr.io/opendatahub-io/batch-gateway-operator:main|' \
+        "${dst}/base/params.env"
+    rm -f "${dst}/base/params.env.bak"
+}
 
-for entry in "${COMPONENTS[@]}"; do
-    IFS='|' read -r name repo commit src_path hook <<< "${entry}"
-    fetch_component "${name}" "${repo}" "${commit}" "${src_path}" "${hook}"
-done
+# Update batchgateway manifests, change the commit SHA below and run: make get-manifests
+fetch_component "batchgateway" "llm-d-batch-gateway-operator" "554d9416f5112da85f99a407c7d33d257175e550" "config"
+patch_batchgateway_image "${PROJECT_ROOT}/config/manifests/batchgateway"
