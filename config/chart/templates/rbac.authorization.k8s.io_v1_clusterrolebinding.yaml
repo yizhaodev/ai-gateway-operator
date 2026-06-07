@@ -3,7 +3,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: opendatahub-ai-gateway-operator
+    app.kubernetes.io/name: {{ include "chart.fullname" . }}
   name: opendatahub-ai-gateway-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io

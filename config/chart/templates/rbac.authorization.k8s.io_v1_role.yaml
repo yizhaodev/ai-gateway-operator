@@ -3,7 +3,7 @@ kind: Role
 metadata:
   labels:
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: opendatahub-ai-gateway-operator
+    app.kubernetes.io/name: {{ include "chart.fullname" . }}
   name: opendatahub-ai-gateway-leader-election-role
   namespace: {{ include "chart.namespace" . }}
 rules:

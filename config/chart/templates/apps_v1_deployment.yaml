@@ -3,20 +3,20 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: opendatahub-ai-gateway-operator
-  name: opendatahub-ai-gateway-operator
+    app.kubernetes.io/name: {{ include "chart.fullname" . }}
+  name: {{ include "chart.fullname" . }}
   namespace: {{ include "chart.namespace" . }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: opendatahub-ai-gateway-operator
+      app.kubernetes.io/name: {{ include "chart.fullname" . }}
   template:
     metadata:
       annotations:
         kubectl.kubernetes.io/default-container: manager
       labels:
-        app.kubernetes.io/name: opendatahub-ai-gateway-operator
+        app.kubernetes.io/name: {{ include "chart.fullname" . }}
     spec:
       containers:
       - command:

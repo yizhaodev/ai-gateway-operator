@@ -3,8 +3,8 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: opendatahub-ai-gateway-operator
-  name: opendatahub-ai-gateway-metrics-service
+    app.kubernetes.io/name: {{ include "chart.fullname" . }}
+  name: {{ include "chart.fullname" . }}-metrics-service
   namespace: {{ include "chart.namespace" . }}
 spec:
   ports:
@@ -13,4 +13,4 @@ spec:
     protocol: TCP
     targetPort: 8443
   selector:
-    app.kubernetes.io/name: opendatahub-ai-gateway-operator
+    app.kubernetes.io/name: {{ include "chart.fullname" . }}
