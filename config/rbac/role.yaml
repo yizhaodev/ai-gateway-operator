@@ -42,12 +42,19 @@ rules:
   - customresourcedefinitions
   verbs:
   - create
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resourceNames:
+  - llmbatchgateways.batch.llm-d.ai
+  resources:
+  - customresourcedefinitions
+  verbs:
   - delete
   - get
-  - list
   - patch
   - update
-  - watch
 - apiGroups:
   - apps
   resources:
@@ -161,9 +168,40 @@ rules:
   - watch
 - apiGroups:
   - rbac.authorization.k8s.io
+  resourceNames:
+  - batch-gateway-operator
+  resources:
+  - clusterrolebindings
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
   resources:
   - clusterrolebindings
   - clusterroles
+  verbs:
+  - create
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resourceNames:
+  - batch-gateway-operator
+  - llmbatchgateway-admin
+  - llmbatchgateway-view
+  resources:
+  - clusterroles
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
   - rolebindings
   - roles
   verbs:
